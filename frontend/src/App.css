@@ -172,6 +172,32 @@ header h1 {
   }
 }
 
+.createEmployerAccount,
+.logInPage {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  width: 500px;
+  max-width: 90%;
+  z-index: 9999;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+
+.signInBtn {
+  margin-left: 50px;
+  padding: 5px 10px;
+  font-size: 14px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background-color: transparent;
+  cursor: pointer;
+}
+
 .confirm-popup {
   position: fixed;
   top: 20px;
