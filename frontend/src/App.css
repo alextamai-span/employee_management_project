@@ -198,6 +198,15 @@ header h1 {
   cursor: pointer;
 }
 
+.logInBtn {
+  padding: 5px 10px;
+  font-size: 12px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background-color: transparent;
+  cursor: pointer;
+}
+
 .confirm-popup {
   position: fixed;
   top: 20px;
