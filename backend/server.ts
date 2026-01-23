@@ -1,222 +1,57 @@
-import Fastify from 'fastify';
-import fastifyPostgres from '@fastify/postgres';
-import fastifyCors from '@fastify/cors';
-import fastifyJwt from '@fastify/jwt';
-import bcrypt from 'bcrypt';
-
-const fastify = Fastify({ logger: true });
-// PostgreSQL
-fastify.register(fastifyPostgres, {
-  connectionString: 'postgres://postgres:Wrestling22!@localhost:4194/employee_mgt',
-});
-
-// CORS
-fastify.register(fastifyCors, {
-  origin: 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-});
-
-// JWT
-fastify.register(fastifyJwt, {
-  secret: 'super-secret-key-change-this',
-});
-
-// server is found and online
-fastify.get('/', async (request, reply) => {
-  console.log('Server is online');
-  reply.status(200).send('Server is online');
-});
+import { buildFastify } from './config/fastify.js';
+import { env } from './config/env.js';
 
 // create tables if tables do not exist
-const employerTableQuery = `
-  CREATE TABLE IF NOT EXISTS employers (
-    id SERIAL PRIMARY KEY,
-    name TEXT,
-    email TEXT UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ,
-    is_deleted BOOLEAN DEFAULT FALSE
-  )`;
+import { employerTableQuery } from './db/query.js'
+import { employeeTableQuery } from './db/query.js'
 
-const employeeTableQuery = `
-  CREATE TABLE IF NOT EXISTS employees (
-    id SERIAL PRIMARY KEY,
-    employer_id INT REFERENCES employers(id) ON DELETE CASCADE,
-    name TEXT NOT NULL,
-    ssn TEXT UNIQUE NOT NULL,
-    address1 TEXT,
-    address2 TEXT,
-    city TEXT,
-    state TEXT,
-    zip TEXT,
-    country TEXT,
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ,
-    is_deleted BOOLEAN DEFAULT FALSE 
-  )`;
+// import routes
+import employerRoutes from './routes/employer.route'
+import employeeRoutes from './routes/employee.route'
 
-// ensure tables are created when server starts
-fastify.ready().then(async () => {
-  const client = await fastify.pg.connect();
+// Fastify build
+const fastify = buildFastify();
 
+// connect and initialize employer/employee database tables
+const initializeDatabase = async () => {
   try {
-    await client.query(employerTableQuery);
-    fastify.log.info('Employer table created or already exists.');
+    const client = await fastify.pg.connect();
 
-    await client.query(employeeTableQuery);
-    fastify.log.info('Employee table created or already exists.');
-  }
-  catch (err) {
-    fastify.log.error('Error creating tables');
-  }
-  finally {
-    client.release();
-  }
-});
-
-// store all employers
-fastify.post('/employers/add', async (request, reply) => {
-  const {
-    employerCompanyName,
-    employerContactPerson,
-    employerEmail,
-    employerPassword,
-  } = request.body as any;
-
-  // get connection
-  const client = await fastify.pg.connect();
-
-  try {
-    const passwordHash = await bcrypt.hash(employerPassword, 10);
-
-    const sql = `INSERT INTO
-      employers (name, email, password_hash)
-      VALUES ($1, $2, $3)`;
-
-    const addNewEmployer = await client.query(
-      sql,
-      [
-        employerCompanyName || employerContactPerson,
-        employerEmail,
-        passwordHash,
-      ]
-    );
-
-    const createdTest = addNewEmployer.rows[1];
-    console.log(createdTest);
-
-    reply.status(201).send({
-      message: 'Employer account created successfully!',
-    });
-  }
-  catch (err) {
-    fastify.log.error(err);
-    reply.status(500).send({ message: 'Failed to create employer' });
-  }
-  finally {
-    client.release();
-  }
-});
-
-import { color, log, red, green, cyan, cyanBright } from 'console-log-colors';
-// employers log in
-fastify.post('/employers/login', async (request, reply) => {
-  const { employerEmail, employerPassword } = request.body as any;
-
-  const client = await fastify.pg.connect();
-
-  try {
-    const sql = `SELECT id, email, password_hash
-      FROM employers
-      WHERE email = $1
-      AND is_deleted = FALSE`;
-
-    // does the email exist
-    const checkDatabase = await client.query(sql, [employerEmail]);
-
-    // does the password match
-    const employer = checkDatabase.rows[0]; // 0 for only 1 unique email
-
-    console.log(color.red('employer: '), employer)
-
-    if (!employer) {
-      throw new Error('Failed to find employer in database'); 
+    try {
+      await client.query(employerTableQuery);
+      await client.query(employeeTableQuery);
+      fastify.log.info('Database tables initialized');
     }
-
-    const isMatch = await bcrypt.compare(
-      // comparing inputted log in to database
-      employerPassword,
-      employer.password_hash
-    );
-    // password invalid
-    if (!isMatch) {
-      return reply.status(401).send({ message: 'Invalid password' });
+    catch (err) {
+      fastify.log.error('Failed to initialize database tables');
+      process.exit(1);
     }
-    console.log(color.red('ismatch: '), isMatch)
-
-    // succuessful login 
-    const token = fastify.jwt.sign(
-      {
-        id: employer.id,
-        email: employer.email,
-      },
-      { expiresIn: '1h' }
-    );
-
-    reply.send({
-      message: 'Login successful',
-      token,
-    });
   }
   catch (err) {
-    fastify.log.error(err);
-    reply.status(500).send({ message: 'Login failed' });
+    fastify.log.error('Failed to connect to database');
+    process.exit(1);
   }
-  finally {
-    client.release();
-  }
-});
+};
 
-// list all employers
-fastify.get('/employers/list', async (request, reply) => {
-  const client = await fastify.pg.connect();
-  
-  try {
-    const { rows } = await client.query('SELECT * FROM employers');
-    reply.status(200).send(rows);
-  } 
-  catch (err) {
-    fastify.log.error(err);
-    reply.status(500).send('Error retrieving employers');
-  }
-  finally {
-    client.release();
-  }
-});
-
-// list all employees
-fastify.get('/employees', async (request, reply) => {
-  const client = await fastify.pg.connect();
-
-  try {
-    const { rows } = await client.query('SELECT * FROM employees');
-    reply.status(200).send(rows);
-  }
-  catch (err) {
-    fastify.log.error(err);
-    reply.status(500).send('Error retrieving employees');
-  }
-  finally {
-    client.release();
-  }
-});
-
-// start and listen on port 5000
+// start 
 const start = async () => {
   try {
+    // check for server
+    fastify.get('/', async () => ({ status: 'online' }));
+
+    // create routes for employer/employee
+    await fastify.register(employerRoutes, { prefix: '/employers' });
+    await fastify.register(employeeRoutes, { prefix: '/employees' });
+
+    // start up plug ins
+    await fastify.ready();
+    // start up database
+    await initializeDatabase();
+
+    
+    // listen on port 5000
     await fastify.listen({ port: 5000 });
-    console.log('listening in progress');
+    console.log(`Server listening at http://localhost:${env.PORT}`);
   }
   catch (err) {
     fastify.log.error(err);
@@ -225,4 +60,3 @@ const start = async () => {
 };
 
 start();
-// export { db }

@@ -1,4 +1,4 @@
-// Form data for creating or logging in an employer account
+// creating a new employer account
 export interface EmployerFormData {
   employerCompanyName: string;
   employerContactPerson: string;
@@ -8,7 +8,7 @@ export interface EmployerFormData {
   employerPhoneNumber: string;
 }
 
-// Errors for employer form fields (all optional)
+// errors from the new employer creation
 export interface EmployerFormErrors {
   employerCompanyName?: string;
   employerContactPerson?: string;
@@ -18,7 +18,19 @@ export interface EmployerFormErrors {
   employerPhoneNumber?: string;
 }
 
-// Props for EmployerLogin component
+export interface EmployerProfile {
+  id: number; 
+  employerCompanyName: string;
+  employerEmail: string;
+}
+
+export interface ServiceResponse {
+  success: boolean;
+  message: string;
+  data?: any;
+}
+
+// Props for login component
 export interface EmployerLoginProps {
   // Pick selects the inputs that are relevant for the log in
   employerFormData: Pick<EmployerFormData, 'employerEmail' | 'employerPassword'>; // Only login fields
@@ -26,6 +38,11 @@ export interface EmployerLoginProps {
   
   handleLogInChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleLogInSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  setShowCreateEmployerAccount: (v: boolean) => void;
-  setShowLogIn: (v: boolean) => void;
+}
+
+export interface AddEmployeeProps {
+  employerFormData: EmployerFormData;
+  errors: EmployerFormErrors;
+  handleEmployerChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleEmployerSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }

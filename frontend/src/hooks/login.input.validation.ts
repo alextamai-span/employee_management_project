@@ -1,8 +1,13 @@
-import { EmployerFormData, EmployerFormErrors } from "../types/employer.types";
+import { EmployerFormErrors } from "../types/employer.types";
+
+interface LoginFields {
+  employerEmail: string;
+  employerPassword: string;
+}
 
 // Validation function
 export const useEmployerLogInValidation = (
-  data: Pick<EmployerFormData, "employerEmail" | "employerPassword">,
+  data: LoginFields,
   setErrors: (errors: Pick<EmployerFormErrors, "employerEmail" | "employerPassword">) => void
 ) => {
   const validateEmployerLogIn = (): boolean => {
@@ -32,7 +37,6 @@ export const useEmployerLogInValidation = (
         newErrors.employerPassword = 'Password must be at least 8 characters long.';
         hasError = true;
     }
-    // ---- need to add validating with database -----
     else {
         newErrors.employerPassword = '';
     }

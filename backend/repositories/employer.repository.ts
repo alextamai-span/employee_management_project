@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { Employer } from '../models/employer';
+import { newEmployer, employerLogin, employerList } from '../db/query';
 
 export const EmployerRepository = (fastify: FastifyInstance) => ({
   // create employer
@@ -12,8 +13,7 @@ export const EmployerRepository = (fastify: FastifyInstance) => ({
 
     try {
       const { rows } = await client.query(
-        `INSERT INTO employers (name, email, password_hash)
-         VALUES ($1, $2, $3)`,
+        newEmployer,
         [name, email, passwordHash]
       );
 
@@ -24,36 +24,22 @@ export const EmployerRepository = (fastify: FastifyInstance) => ({
     }
   },
 
-  // find employer with email
+  // Find employer by email (for login)
   async findByEmail(email: string): Promise<Employer | null> {
-    const client = await fastify.pg.connect();
+    const { rows } = await fastify.pg.query(
+      employerLogin,
+      [email]
+    );
 
-    try {
-      const { rows } = await client.query(
-        `SELECT * FROM employers WHERE email = $1 AND is_deleted = FALSE`,
-        [email]
-      );
-
-      return rows[0] || null;
-    }
-    finally {
-      client.release();
-    }
+    return rows[0] || null;
   },
 
-  // list all employers
-  async listAll(): Promise<Employer[]> {
-    const client = await fastify.pg.connect();
+  // listing all employers
+  async listAllEmployers(): Promise<Employer[]> {
+    const { rows } = await fastify.pg.query(
+      employerList
+    );
 
-    try {
-      const { rows } = await client.query(
-        `SELECT id, name, email, created_at FROM employers WHERE is_deleted = FALSE`
-      );
-
-      return rows;
-    }
-    finally {
-      client.release();
-    }
-  },
+    return rows;
+  }
 });

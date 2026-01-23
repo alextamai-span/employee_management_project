@@ -11,6 +11,8 @@ export const buildFastify = () => {
 
   // PostgreSQL
   fastify.register(fastifyPostgres, {
+    // what is it doing 
+    // ----------------
     connectionString: env.DATABASE_URL,
   });
 

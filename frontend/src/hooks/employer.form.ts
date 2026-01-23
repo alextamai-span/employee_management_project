@@ -1,29 +1,35 @@
 import { useState } from "react";
+import { EmployerFormData, EmployerFormErrors } from "../types/employer.types";
 
 export const useEmployerForm = () => {
-  const [employerFormData, setEmployerFormData] = useState({
+  // Initial state for the form
+  const [employerFormData, setEmployerFormData] = useState<EmployerFormData>({
     employerCompanyName: "",
     employerContactPerson: "",
     employerEmail: "",
     employerPassword: "",
     employerConfirmPassword: "",
-    employerPhoneNumber: ""
+    employerPhoneNumber: "",
   });
+  // Initial state for errors
+  const [errors, setErrors] = useState<EmployerFormErrors>({});
 
-  const [errors, setErrors] = useState<any>({});
-
-  const handleEmployerChange = (e: any) => {
+  
+  const handleEmployerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    setEmployerFormData(prevState => ({
-      ...prevState,
-      [name === "companyName" ? "employerCompanyName" :
-       name === "contactPerson" ? "employerContactPerson" :
-       name === "email" ? "employerEmail" :
-       name === "password" ? "employerPassword" :
-       name === "confirmPassword" ? "employerConfirmPassword" :
-       name === "phoneNumber" ? "employerPhoneNumber" : name]: value
+    setEmployerFormData((prev) => ({
+      ...prev,
+      [name]: value,
     }));
+
+    // Clear the specific error for this field as the user types
+    if (errors[name as keyof EmployerFormErrors]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
+    }
   };
 
   return {
@@ -31,6 +37,6 @@ export const useEmployerForm = () => {
     setEmployerFormData,
     errors,
     setErrors,
-    handleEmployerChange
+    handleEmployerChange,
   };
 };

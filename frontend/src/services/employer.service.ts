@@ -1,20 +1,16 @@
-import { EmployerFormData } from "../types/employer.types";
-
-interface ServiceResponse {
-  success: boolean;
-  message: string;
-}
+import EmployerLogin from "../pages/employer.login";
+import { EmployerFormData, ServiceResponse } from "../types/employer.types";
 
 export const saveEmployerAccountToDB = async (
-  data: EmployerFormData
+  newData: EmployerFormData
 ): Promise<ServiceResponse> => {
   try {
-    const response = await fetch("http://localhost:5000/employers/add", {
+    const response = await fetch("http://localhost:5000/employers/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(newData),
     });
 
     if (!response.ok) {
@@ -38,7 +34,7 @@ export const saveEmployerAccountToDB = async (
 };
 
 export const authenticateEmployer = async (
-  data: Pick<EmployerFormData, "employerEmail" | "employerPassword"> // only need the email and password for logging in
+  checkData: Pick<EmployerFormData, "employerEmail" | "employerPassword"> // only need the email and password for logging in
 ): Promise<ServiceResponse> => {
   try {
     const response = await fetch("http://localhost:5000/employers/login", {
@@ -46,18 +42,20 @@ export const authenticateEmployer = async (
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(checkData),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to log in');
+      throw new Error('response Failed to log in');
     }
 
     // get result from the response
     const result = await response.json();
+
     return {
       success: true,
-      message: result.message || "Log in successful!"
+      message: result.message || "Log in successful!",
+      data: result.employerId
     };
   }
   catch (error) {
