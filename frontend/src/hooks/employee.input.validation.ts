@@ -58,19 +58,6 @@ export const useEmployeeValidation = (
         newErrors.city = '';
     }
 
-    // State validation
-    if (!data.state) {
-        newErrors.employeeState = 'Employee State is required.';
-        hasError = true;
-    }
-    else if (data.state === 'Select State') {
-        newErrors.state = 'Employee State is required.';
-        hasError = true;
-    }
-    else {
-        newErrors.state = '';
-    }
-
     // Zip validation
     const zipRegrx = /^\d{5}(-\d{4})?$/;
     if (!data.zip.trim()) {
@@ -93,6 +80,23 @@ export const useEmployeeValidation = (
     else if (data.country === 'Select Country') {
         newErrors.country = 'Employee Country is required.';
         hasError = true;
+    }
+    else if (data.country === 'United States') {
+        // State validation
+        if (!data.state) {
+            newErrors.employeeState = 'Employee State is required.';
+            hasError = true;
+        }
+        else if (data.state === 'Select State') {
+            newErrors.state = 'Employee State is required.';
+            hasError = true;
+        }
+        else {
+            newErrors.state = '';
+        }
+    }
+    else if (data.country !== 'United States') {
+        data.state = 'Not in United States';
     }
     else {
         newErrors.country = '';

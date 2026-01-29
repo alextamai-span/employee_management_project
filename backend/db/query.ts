@@ -45,7 +45,22 @@ export const addEmployee = `
     city, state, zip, country)
   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
 
+export const updateEmployee = `
+  UPDATE employees 
+  SET name = $1, ssn = $2, 
+    address1 = $3, address2 = $4, 
+    city = $5, state = $6, 
+    zip = $7, country = $8,
+    updated_at = NOW()
+  WHERE id = $9
+  RETURNING *`;
+
 export const employeeList = `
   SELECT * FROM employees 
   WHERE employer_id = $1 
   ORDER BY created_at DESC`;
+
+export const deleteEmployeeFromList = `
+  DELETE FROM employees
+  WHERE id = $1
+  RETURNING *`;

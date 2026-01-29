@@ -36,10 +36,11 @@ export default function EmployerRegister() {
 
     if (!hasError) {
       try {
-        await saveEmployerAccountToDB(employerFormData);
+        const result = await saveEmployerAccountToDB(employerFormData);
 
         toast.success("Employer account created successfully!");
-        navigate("/employer/management");
+        toast.success("Go and login now!")
+        navigate("/employer/login");
 
 
         setEmployerFormData({

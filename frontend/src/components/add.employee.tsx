@@ -18,7 +18,6 @@ const AddEmployeePopUp: React.FC<AddEmployeePopUpProps> = ({
   employerId
 }) => {
   const [employeeFormData, setEmployeeFormData] = useState<EmployeeFormData>({
-    employer_id: "",
     name: "",
     ssn: "",
     address1: "",
@@ -43,6 +42,30 @@ const AddEmployeePopUp: React.FC<AddEmployeePopUpProps> = ({
       ...prev,
       [e.target.name]: e.target.value
     }));
+  };
+
+  // ssn changes
+  const handleSsnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 9) {
+      value = value.slice(0, 9);
+    }
+    
+    let formatted = '';
+    if (value.length > 0) {
+      formatted = value.slice(0, 3);
+    }
+    if (value.length >= 4) {
+      formatted += '-' + value.slice(3, 5);
+    }
+    if (value.length >= 6) {
+      formatted += '-' + value.slice(5, 9);
+    }
+
+    setEmployeeFormData({ 
+      ...employeeFormData,
+      ssn: formatted
+    });
   };
 
   // state or country changes
@@ -71,14 +94,17 @@ const AddEmployeePopUp: React.FC<AddEmployeePopUpProps> = ({
 
     if (!hasError) {
       try {
-        const newEmployee = await addEmployee({
+
+        const formData = {
           ...employeeFormData,
-          employer_id: employerId
-          });
-        
+          employer_id: employerId,
+        };
+
+        const newEmployee = await addEmployee(formData);
+                
         if (newEmployee.success && newEmployee.data) {
-          toast.success("Employee created");
-          onEmployeeAdded(newEmployee.data as Employee);
+          onEmployeeAdded(newEmployee.data);
+          onClose();
         }
         else {
           toast.error("Failed to create employee");
@@ -130,7 +156,7 @@ const AddEmployeePopUp: React.FC<AddEmployeePopUpProps> = ({
             name="ssn"
             placeholder="SSN"
             value={employeeFormData.ssn}
-            onChange={handleChange} />
+            onChange={handleSsnChange} />
           {errors.ssn && ( <h4 className="form-invalid">{errors.ssn}</h4> )}
 
           <input

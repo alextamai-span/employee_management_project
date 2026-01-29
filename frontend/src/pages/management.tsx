@@ -7,7 +7,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 import AddEmployeePopUp from '../components/add.employee'
 import EditEmployeePopUp from "../components/edit.employee";
-import { useEmployeeValidation } from "../hooks/employee.input.validation";
 
 const EmployeeManagement = () => {
   const navigate = useNavigate();
@@ -20,24 +19,41 @@ const EmployeeManagement = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
 
   // get the employees that work for the employer
-  useEffect( () => {
+  useEffect(() => {
     const loadEmployees = async () => {
       try {
-        const data = await fetchEmployees(employerId);
-        //setEmployees(data);
+        const allEmployees = await fetchEmployees(employerId);
+        
+        // Filter the data: only keep those where the ID matches
+        const filteredData = allEmployees.filter((emp: any) => 
+          emp.employer_id == employerId
+        );
+
+        setEmployees(filteredData);
       }
       catch (error) {
         toast.error("Failed to load employees");
       }
     };
 
-    loadEmployees();
+    if (employerId) { 
+      loadEmployees();
+    }
   }, [employerId]); // Runs whenever employerId changes
-  
-  
-  const handleEmployeeAdded = (newEmployee: Employee) => {
-    setEmployees(prev => [newEmployee, ...prev]);
-    setShowAddPopUp(false);
+
+  // employee has been added
+  const handleNewEmployee = async () => {
+    try {
+      // Re-fetch the updated list from the server
+      const data = await fetchEmployees(employerId);
+      setEmployees(data);
+      
+      // Close the popup
+      setShowAddPopUp(false);
+    }
+    catch (error) {
+      toast.error("Employee was added, but the list failed to refresh.");
+    }
   };
 
   // delete an employee
@@ -139,7 +155,7 @@ const EmployeeManagement = () => {
             key={employerId}
             employerId={employerId}
             onClose={() => setShowAddPopUp(false)}
-            onEmployeeAdded={handleEmployeeAdded}
+            onEmployeeAdded={handleNewEmployee}
           />
         )}
 

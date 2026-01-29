@@ -1,13 +1,15 @@
 import { buildFastify } from './config/fastify.js';
 import { env } from './config/env.js';
+import colors from 'console-log-colors'
 
 // create tables if tables do not exist
-import { employerTableQuery } from './db/query.js'
-import { employeeTableQuery } from './db/query.js'
+import { employerTableQuery, employeeTableQuery } from './db/query.js'
+import { loggerQuery } from './db/loggerQuery.js';
 
 // import routes
 import employerRoutes from './routes/employer.route'
 import employeeRoutes from './routes/employee.route'
+import { requestLogger } from './plugins/requestLogger.js';
 
 // Fastify build
 const fastify = buildFastify();
@@ -20,6 +22,7 @@ const initializeDatabase = async () => {
     try {
       await client.query(employerTableQuery);
       await client.query(employeeTableQuery);
+      await client.query(loggerQuery);
       fastify.log.info('Database tables initialized');
     }
     catch (err) {
@@ -36,6 +39,9 @@ const initializeDatabase = async () => {
 // start 
 const start = async () => {
   try {
+    // start logging
+    requestLogger(fastify); 
+
     // check for server
     fastify.get('/', async () => ({ status: 'online' }));
 

@@ -1,10 +1,7 @@
-import { useState, useEffect } from 'react';
 import { Employee, EmployeeFormData } from "../types/employee.types";
 import { ServiceResponse } from "../types/employer.types";
 
 export const fetchEmployees = async (employerId: any): Promise<Employee[]> => {
-  const [employees, setEmployees] = useState<Employee[]>([]);
-
   try {
     const response = await fetch(`http://localhost:5000/employees/list?employerId=${employerId}`, { 
       method: "GET",
@@ -15,10 +12,7 @@ export const fetchEmployees = async (employerId: any): Promise<Employee[]> => {
       throw new Error("Failed to fetch employees");
     }
 
-    const data = await response.json();
-    setEmployees(data); 
-
-    return data;
+    return await response.json();
   }
   catch (err) {
     console.error('Error getting all employees:', err);
@@ -26,19 +20,12 @@ export const fetchEmployees = async (employerId: any): Promise<Employee[]> => {
   }
 };
 
-export const addEmployee = async (formData: EmployeeFormData, employerId: string): Promise<ServiceResponse> => {
+export const addEmployee = async (formData: EmployeeFormData): Promise<ServiceResponse> => {
   try {
-    const employeeData = {
-      ...formData,
-      employer_id: employerId
-    }
-
     const response = await fetch(`http://localhost:5000/employees/add`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json", 
-        },
-        body: JSON.stringify(employeeData),
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(formData),
     });
 
     if (!response.ok) {
@@ -46,6 +33,7 @@ export const addEmployee = async (formData: EmployeeFormData, employerId: string
     }
 
     const newEmployee = await response.json();
+    
     return {
       success: true,
       message: 'Success',
@@ -62,29 +50,28 @@ export const addEmployee = async (formData: EmployeeFormData, employerId: string
 };
 
 export const updateEmployee = async (
-  id: string,
+  id: any,
   employeeData: EmployeeFormData
 ): Promise<ServiceResponse> => {
   try {
-    console.log('employee data:', employeeData)
-    const response = await fetch(`http://localhost:5000/employees/${id}`, {
+    const response = await fetch(`http://localhost:5000/employees/update?employeeId=${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(employeeData),
     });
 
-    
-
     if (!response.ok) {
       throw new Error("Failed to update employee");
     }
 
-    const data: Employee = await response.json();
+    const result = await response.json();
     return {
       success: true,
-      message: 'Success'
+      message: 'Success',
+      data: result
     }
-  } catch (err) {
+  }
+  catch (err) {
     console.error("Failed to update employee:", err);
     return {
       success: false,
@@ -93,11 +80,31 @@ export const updateEmployee = async (
   }
 };
 
-export const deleteEmployee = async (id: string): Promise<ServiceResponse> => {
-  const response = await fetch(`http://localhost:5000/employees/${id}`, {
-    method: "DELETE",
-    headers: {"Content-Type": "application/json"}
-  });
+export const deleteEmployee = async (
+  id: any,
+): Promise<ServiceResponse> => {
+  try {
+    console.log('id', id)
+    const response = await fetch(`http://localhost:5000/employees/delete?employeeId=${id}`, {
+      method: "DELETE"
+    });
 
-  return response.json();
+    if (!response.ok) {
+      throw new Error("Failed to delete employee");
+    }
+
+    const result = await response.json();
+    return {
+      success: true,
+      message: 'Success',
+      data: result
+    }
+  }
+  catch (err: any) {
+    console.error("Failed to delete employee:", err);
+    return {
+      success: false,
+      message: 'Fail'
+    }
+  }
 };
