@@ -11,11 +11,11 @@ export const useEmployeeValidation = (
     // Employee Name validation
     const EmployeeNameRegex = /^[A-Za-z\s]{2,50}$/;
     if (!data.name.trim()) {
-        newErrors.employeeName = 'Employee Name is required.';
+        newErrors.name = 'Employee Name is required.';
         hasError = true;
     }
     else if (!EmployeeNameRegex.test(data.name)) {
-        newErrors.employeeName = 'Employee Name must be 2-50 characters long and contain only letters and spaces.';
+        newErrors.name = 'Employee Name must be 2-50 characters long and contain only letters and spaces.';
         hasError = true;
     }
     else {
@@ -29,7 +29,7 @@ export const useEmployeeValidation = (
         hasError = true;
     }
     else if (!ssnRegex.test(data.ssn)) {
-        newErrors.employeeSsn = 'Employee SSN is not valid.';
+        newErrors.ssn = 'Employee SSN is not valid.';
         hasError = true;
     }
     else {
@@ -59,12 +59,12 @@ export const useEmployeeValidation = (
     }
 
     // Zip validation
-    const zipRegrx = /^\d{5}(-\d{4})?$/;
+    const zipRegex = /^\d{5}(-\d{4})?$/;
     if (!data.zip.trim()) {
         newErrors.zip = 'Employee Zip is required.';
         hasError = true;
     }
-    else if (!zipRegrx.test(data.zip)) {
+    else if (!zipRegex.test(data.zip)) {
         newErrors.zip = 'Employee Zip is not valid.';
         hasError = true;
     }
@@ -73,21 +73,13 @@ export const useEmployeeValidation = (
     }
 
     // Country validation
-    if (!data.country) {
-        newErrors.country = 'Employee Country is required.';
-        hasError = true;
-    }
-    else if (data.country === 'Select Country') {
+    if (!data.country || data.country === 'Select Country') {
         newErrors.country = 'Employee Country is required.';
         hasError = true;
     }
     else if (data.country === 'United States') {
         // State validation
-        if (!data.state) {
-            newErrors.employeeState = 'Employee State is required.';
-            hasError = true;
-        }
-        else if (data.state === 'Select State') {
+        if (!data.state || data.state === 'Select State') {
             newErrors.state = 'Employee State is required.';
             hasError = true;
         }
