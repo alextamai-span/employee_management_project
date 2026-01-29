@@ -29,6 +29,33 @@ export default function EmployerRegister() {
     setEmployerFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Remove all non-digit characters
+  let value = e.target.value.replace(/\D/g, '');
+
+  // Limit to 10 digits
+  if (value.length > 10) {
+    value = value.slice(0, 10);
+  }
+
+  // Format as (XXX) XXX-XXXX
+  let formatted = '';
+  if (value.length > 0) {
+    formatted = '(' + value.slice(0, 3);
+  }
+  if (value.length >= 4) {
+    formatted += ') ' + value.slice(3, 6);
+  }
+  if (value.length >= 7) {
+    formatted += '-' + value.slice(6, 10);
+  }
+
+  setEmployerFormData({
+    ...employerFormData,
+    employerPhoneNumber: formatted
+  });
+};
+
   // Submit handler
   const handleEmployerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -136,7 +163,7 @@ export default function EmployerRegister() {
             id="phoneNumber"
             name="employerPhoneNumber"
             value={employerFormData.employerPhoneNumber}
-            onChange={handleEmployerChange}
+            onChange={handlePhoneChange}
           />
           {errors.employerPhoneNumber && ( <h4 className="form-invalid">{errors.employerPhoneNumber}</h4> )}
         </div>

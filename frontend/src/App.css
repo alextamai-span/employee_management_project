@@ -296,7 +296,7 @@ th {
 /* Employer Forms */
 .loginEmployer {
   position: relative;
-  max-width: 400px;
+  max-width: 700px;
   margin: 60px auto;
   padding: 40px 30px;
   background-color: #ffffff;
@@ -319,15 +319,23 @@ th {
   color: #666;
 }
 
+.loginEmployer form > div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
 .loginEmployer label {
   display: block;
   font-weight: 500;
-  margin-bottom: 6px;
+  margin-top: 20px;
+  margin-right: 20px;
+  text-align: left;
   color: #555;
 }
 
 .loginEmployer input {
-  width: 100%;
+  flex: 1;
   padding: 12px 15px;
   font-size: 1rem;
   border: 1px solid #ccc;
