@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import '../App.css'
 import { useNavigate, useLocation } from "react-router-dom";
 
-import AddEmployeePopUp from '../components/add.employee'
+import AddEmployeePopUp from '../components/add.employee';
 import EditEmployeePopUp from "../components/edit.employee";
 
 const EmployeeManagement = () => {
@@ -14,7 +14,7 @@ const EmployeeManagement = () => {
   const employerId = location.state.employerId;
 
   const [showAddPopUp, setShowAddPopUp] = useState(false);
-  const [showEditPopUp, setShowEditPopUp] = useState(false);
+  const [showEditEmployeePopUp, setshowEditEmployeePopUp] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [employees, setEmployees] = useState<Employee[]>([]);
 
@@ -123,7 +123,7 @@ const EmployeeManagement = () => {
                     className="edit-btn"
                     onClick={() => {
                       setSelectedEmployee(emp);
-                      setShowEditPopUp(true);
+                      setshowEditEmployeePopUp(true);
                     }}
                   >
                     <img src="/edit.png" alt="Edit" />
@@ -159,11 +159,11 @@ const EmployeeManagement = () => {
           />
         )}
 
-        {showEditPopUp && selectedEmployee && (
+        {showEditEmployeePopUp && selectedEmployee && (
           <EditEmployeePopUp
             employee={selectedEmployee}
             onClose={() => {
-              setShowEditPopUp(false);
+              setshowEditEmployeePopUp(false);
               setSelectedEmployee(null);
             }}
             onEmployeeUpdated={(updatedEmployee: Employee) =>

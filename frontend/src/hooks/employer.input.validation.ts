@@ -76,7 +76,7 @@ export const useEmployerValidation = (
     }
 
     // Phone validation
-    const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
+    const phoneRegex = /^\(\d{3}\) \d{3}-\d{4}$/;
     if (!data.employerPhoneNumber.trim()) {
         newErrors.employerPhoneNumber = 'Phone is required.';
         hasError = true;
