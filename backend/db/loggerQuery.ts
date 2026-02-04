@@ -25,5 +25,4 @@ export const insertLog = `
 export const getLogs = `
   SELECT *
   FROM api_request_logs
-  ORDER BY created_at DESC
   LIMIT 100`;

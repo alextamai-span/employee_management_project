@@ -1,3 +1,6 @@
+import usCitiesData from './USCities.json';
+import { USCity } from '../types/us.cities';    
+const usCities: USCity[] = usCitiesData as USCity[];
 
 // Validation function
 export const useEmployeeValidation = (
@@ -59,7 +62,7 @@ export const useEmployeeValidation = (
     }
 
     // Zip validation
-    const zipRegex = /^\d{5}(-\d{4})?$/;
+    const zipRegex = /^\d{3,5}(-\d{4})?$/;
     if (!data.zip.trim()) {
         newErrors.zip = 'Employee Zip is required.';
         hasError = true;
@@ -69,6 +72,24 @@ export const useEmployeeValidation = (
         hasError = true;
     }
     else {
+        if (data.country === 'United States') {
+            // Check zip matches city and state
+            const matchedZip = usCities.find(
+                (entry: any) =>
+                    entry.zip_code.toString() === data.zip &&
+                    entry.city.trim().toLowerCase() === data.city.trim().toLowerCase() &&
+                    entry.state.toLowerCase() === data.state.trim().toLowerCase()
+            );
+
+            console.log('matched zip', matchedZip)
+            if (!matchedZip) {
+                newErrors.zip = 'Employee Zip does not match city or state.';
+                hasError = true;
+            }
+            else {
+                newErrors.zip = '';
+            }
+        }
         newErrors.zip = '';
     }
 

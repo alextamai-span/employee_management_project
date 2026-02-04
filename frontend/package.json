@@ -16,6 +16,7 @@
     "body-parser": "^2.2.1",
     "cors": "^2.8.5",
     "countries-list": "^3.2.2",
+    "fs": "^0.0.1-security",
     "ph": "^0.1.10",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -28,7 +29,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/express": "^5.0.6",
-    "@types/node": "^24.10.4",
+    "@types/node": "^24.10.10",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",

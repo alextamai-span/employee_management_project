@@ -84,7 +84,6 @@ export const deleteEmployee = async (
   id: any,
 ): Promise<ServiceResponse> => {
   try {
-    console.log('id', id)
     const response = await fetch(`http://localhost:5000/employees/delete?employeeId=${id}`, {
       method: "DELETE"
     });

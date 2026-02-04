@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Employee } from "../types/employee.types";
 import { updateEmployee } from "../services/employee.service";
+import { useEmployeeValidation } from "../hooks/employee.input.validation";
 import { toast } from "react-toastify";
 import { countries } from 'countries-list';
 
@@ -25,6 +26,14 @@ const EditEmployeePopUp: React.FC<EditEmployeePopUpProps> = ({
     zip: employee.zip,
     country: employee.country
   });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Validation hook
+  const { validateEmployeeForm } = useEmployeeValidation(
+    formData,
+    setErrors
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -66,33 +75,40 @@ const EditEmployeePopUp: React.FC<EditEmployeePopUpProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const result = await updateEmployee(employee.id, formData);
 
-      if (result.success) {
-        toast.success("Employee updated");
-        
-        let updatedRecord;
+    const hasError = validateEmployeeForm();
+    if (!hasError) {
+      try {
+        const result = await updateEmployee(employee.id, formData);
 
-        if (result.data && result.data.id) {
-          updatedRecord = result.data;
+        if (result.success) {
+          toast.success("Employee updated");
+          
+          let updatedRecord;
+
+          if (result.data && result.data.id) {
+            updatedRecord = result.data;
+          }
+          else {
+            updatedRecord = { 
+              ...employee, 
+              ...formData 
+            };
+          }
+
+          onEmployeeUpdated(updatedRecord as Employee);
+          onClose();
         }
         else {
-          updatedRecord = { 
-            ...employee, 
-            ...formData 
-          };
+          toast.error("Failed to update: " + result.message);
         }
-
-        onEmployeeUpdated(updatedRecord as Employee);
-        onClose();
       }
-      else {
-        toast.error("Failed to update: " + result.message);
+      catch {
+        toast.error("Failed to update employee");
       }
     }
-    catch {
-      toast.error("Failed to update employee");
+    else {
+      toast.error("Please fix the errors in the form.");
     }
   };
 
@@ -104,16 +120,12 @@ const EditEmployeePopUp: React.FC<EditEmployeePopUpProps> = ({
 
   // selecting a us state
   const US_STATES = [
-    "Alabama","Alaska","Arizona","Arkansas","California","Colorado",
-    "Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho",
-    "Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana",
-    "Maine","Maryland","Massachusetts","Michigan","Minnesota",
-    "Mississippi","Missouri","Montana","Nebraska","Nevada",
-    "New Hampshire","New Jersey","New Mexico","New York",
-    "North Carolina","North Dakota","Ohio","Oklahoma","Oregon",
-    "Pennsylvania","Rhode Island","South Carolina","South Dakota",
-    "Tennessee","Texas","Utah","Vermont","Virginia","Washington",
-    "West Virginia","Wisconsin","Wyoming"
+    "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
+    "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+    "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+    "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
+    "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY",
+    "DC", "PR", "GU", "VI", "AS", "MP"
   ];
 
   return (
@@ -123,10 +135,19 @@ const EditEmployeePopUp: React.FC<EditEmployeePopUpProps> = ({
 
         <form onSubmit={handleSubmit}>
           <input name="name" value={formData.name} onChange={handleChange} />
+          {errors.name && ( <h4 className="form-invalid">{errors.name}</h4> )}
+
           <input name="ssn" value={formData.ssn} onChange={handleSsnChange} />
+          {errors.ssn && ( <h4 className="form-invalid">{errors.ssn}</h4> )}
+
           <input name="address1" value={formData.address1} onChange={handleChange} />
+          {errors.address1 && ( <h4 className="form-invalid">{errors.address1}</h4> )}
+
           <input name="address2" value={formData.address2} onChange={handleChange} />
+
           <input name="city" value={formData.city} onChange={handleChange} />
+          {errors.city && ( <h4 className="form-invalid">{errors.city}</h4> )}
+
           <select
             name="state"
             value={formData.state}
@@ -139,7 +160,11 @@ const EditEmployeePopUp: React.FC<EditEmployeePopUpProps> = ({
               </option>
             ))}
           </select>
+          {errors.state && ( <h4 className="form-invalid">{errors.state}</h4> )}
+
           <input name="zip" value={formData.zip} onChange={handleChange} />
+          {errors.zip && ( <h4 className="form-invalid">{errors.zip}</h4> )}
+          
           <select
             name="country"
             value={formData.country}
@@ -152,6 +177,7 @@ const EditEmployeePopUp: React.FC<EditEmployeePopUpProps> = ({
               </option>
             ))}
           </select>
+          {errors.country && ( <h4 className="form-invalid">{errors.country}</h4> )}
 
           <div className="modal-actions">
             <button type="submit" className="signInBtn">
