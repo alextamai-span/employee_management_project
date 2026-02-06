@@ -9,11 +9,13 @@ interface EditEmployeePopUpProps {
   employee: Employee;
   onClose: () => void;
   onEmployeeUpdated: (employee: Employee) => void;
+  token: string;
 }
 
 const EditEmployeePopUp: React.FC<EditEmployeePopUpProps> = ({
   employee,
   onClose,
+  token,
   onEmployeeUpdated
 }) => {
   const [formData, setFormData] = useState({
@@ -80,7 +82,7 @@ const EditEmployeePopUp: React.FC<EditEmployeePopUpProps> = ({
     const hasError = validateEmployeeForm();
     if (!hasError) {
       try {
-        const result = await updateEmployee(employee.id, formData);
+        const result = await updateEmployee(employee.id, token, formData);
 
         if (result.success) {
           toast.success("Employee updated");

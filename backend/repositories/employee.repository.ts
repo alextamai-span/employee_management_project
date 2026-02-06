@@ -1,7 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { Employee } from '../models/employee';
-import { addEmployee, updateEmployee, employeeList, deleteEmployeeFromList } from '../db/query';
-import colors from 'console-log-colors'
+import { addEmployee, updateEmployee, employeeList, deleteEmployee } from '../db/query';
 
 export const EmployeeRepository = (fastify: FastifyInstance) => ({
   // add a new employee
@@ -62,10 +61,9 @@ export const EmployeeRepository = (fastify: FastifyInstance) => ({
   },
 
   async deleteEmployee(employeeId: any): Promise<Employee> {
-    console.log(colors.red('id'), employeeId)
     try {
       const row = await fastify.pg.query(
-        deleteEmployeeFromList,
+        deleteEmployee,
         [employeeId]
       );
 

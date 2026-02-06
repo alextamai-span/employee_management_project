@@ -1,10 +1,9 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { EmployeeService } from '../services/employee.service';
 import { Employee } from '../models/employee';
-import colors from 'console-log-colors'
 
 // receive requests and respond to them
-export const EmployeeController = {
+export const EmployeeController = { 
   // add an employee
   async addEmployee(request: FastifyRequest, reply: FastifyReply) {
     const service = EmployeeService(request.server);
@@ -73,7 +72,7 @@ export const EmployeeController = {
 
       return reply.status(200).send({
         message: 'Employee deleted successfully!',
-        employeeId
+        deleted
       });
     } 
     catch (err: any) {

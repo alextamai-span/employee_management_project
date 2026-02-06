@@ -8,11 +8,13 @@ import { countries } from 'countries-list';
 
 interface AddEmployeePopUpProps {
   onClose: () => void;
+  token: string;
   onEmployeeAdded: (employee: Employee) => void;
 }
 
 const AddEmployeePopUp: React.FC<AddEmployeePopUpProps> = ({
   onClose,
+  token,
   onEmployeeAdded,
 }) => {
   const [employeeFormData, setEmployeeFormData] = useState<EmployeeFormData>({
@@ -96,7 +98,7 @@ const AddEmployeePopUp: React.FC<AddEmployeePopUpProps> = ({
 
         const formData = { ...employeeFormData };
 
-        const newEmployee = await addEmployee(formData);
+        const newEmployee = await addEmployee(formData, token);
                 
         if (newEmployee.success && newEmployee.data) {
           onEmployeeAdded(newEmployee.data);

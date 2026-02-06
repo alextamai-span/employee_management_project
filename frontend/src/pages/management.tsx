@@ -25,12 +25,7 @@ const EmployeeManagement = () => {
       try {
         const allEmployees = await fetchEmployees(employerId, token);
 
-        // Filter the data: remove null employer_id 
-        const filteredData = allEmployees.filter((emp: any) => 
-          emp.employer_id !== null
-        );
-
-        setEmployees(filteredData);
+        setEmployees(allEmployees);
       }
       catch (error) {
         toast.error("Failed to load employees");
@@ -46,6 +41,7 @@ const EmployeeManagement = () => {
     try {
       // Re-fetch the updated list from the server
       const data = await fetchEmployees(employerId, token);
+
       setEmployees(data);
       
       // Close the popup
@@ -59,7 +55,7 @@ const EmployeeManagement = () => {
   // delete an employee
   const handleDelete = async (id: string) => {
     try {
-      await deleteEmployee(id);
+      await deleteEmployee(id, token);
       setEmployees(prev => prev.filter((emp: any) => emp.id !== id));
       toast.success("Employee deleted");
     }
@@ -155,6 +151,7 @@ const EmployeeManagement = () => {
         {showAddPopUp && (
           <AddEmployeePopUp
             key={employerId}
+            token={token}
             onClose={() => setShowAddPopUp(false)}
             onEmployeeAdded={handleNewEmployee}
           />
@@ -163,6 +160,7 @@ const EmployeeManagement = () => {
         {showEditEmployeePopUp && selectedEmployee && (
           <EditEmployeePopUp
             employee={selectedEmployee}
+            token={token}
             onClose={() => {
               setshowEditEmployeePopUp(false);
               setSelectedEmployee(null);

@@ -60,8 +60,8 @@ export const employeeList = `
   WHERE is_deleted = FALSE
   ORDER BY created_at DESC`;
 
-export const deleteEmployeeFromList = `
+export const deleteEmployee = `
   UPDATE employees
-  SET is_deleted = TRUE
+  SET is_deleted = TRUE, updated_at = NOW()
   WHERE id = $1
   RETURNING *`;

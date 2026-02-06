@@ -31,6 +31,7 @@ export const EmployerController = {
       const { employerEmail, employerPassword } = request.body as any;
       const employer = await service.loginEmployer(employerEmail, employerPassword);
 
+      // create JWT token with employer id and email, expires in 1 hour
       const token = request.server.jwt.sign(
         { 
           id: employer.id,
@@ -39,6 +40,7 @@ export const EmployerController = {
         { expiresIn: '1h' }
       );
 
+      // send the token and employer id back to the client (frontend - services/employer.service)
       return reply.send({
         message: 'Login successful',
         employerId: employer.id,

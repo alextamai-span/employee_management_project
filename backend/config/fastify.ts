@@ -2,7 +2,6 @@ import Fastify from 'fastify';
 import fastifyPostgres from '@fastify/postgres';
 import fastifyCors from '@fastify/cors';
 import fastifyJwt from '@fastify/jwt';
-import fastifyCookie from '@fastify/cookie';
 import { env } from './env';
 
 export const buildFastify = () => {
@@ -14,12 +13,8 @@ export const buildFastify = () => {
 
   fastify.register(fastifyCors, {
     origin: env.FRONTEND_URL,
-    credentials: true, // REQUIRED for cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
   });
-
-  // for cookie-based JWT
-  fastify.register(fastifyCookie);
 
   // JWT config
   fastify.register(fastifyJwt, {

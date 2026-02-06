@@ -23,11 +23,14 @@ export const fetchEmployees = async (employerId: any, token: string): Promise<Em
   }
 };
 
-export const addEmployee = async (formData: EmployeeFormData): Promise<ServiceResponse> => {
+export const addEmployee = async (formData: EmployeeFormData, token: string): Promise<ServiceResponse> => {
   try {
     const response = await fetch(`http://localhost:5000/employees/add`, {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify(formData),
     });
 
@@ -54,12 +57,16 @@ export const addEmployee = async (formData: EmployeeFormData): Promise<ServiceRe
 
 export const updateEmployee = async (
   id: any,
+  token: string,
   employeeData: EmployeeFormData
 ): Promise<ServiceResponse> => {
   try {
     const response = await fetch(`http://localhost:5000/employees/update?employeeId=${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
       body: JSON.stringify(employeeData),
     });
 
@@ -85,11 +92,15 @@ export const updateEmployee = async (
 
 export const deleteEmployee = async (
   id: any,
+  token: string
 ): Promise<ServiceResponse> => {
   try {
     const response = await fetch(`http://localhost:5000/employees/delete?employeeId=${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
       body: JSON.stringify(id),
     });
 

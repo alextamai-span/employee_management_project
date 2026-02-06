@@ -1,7 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { EmployeeRepository } from '../repositories/employee.repository';
 import { Employee } from '../models/employee';
-import colors from 'console-log-colors'
 
 export const EmployeeService = (fastify: FastifyInstance) => {
   const repo = EmployeeRepository(fastify);
