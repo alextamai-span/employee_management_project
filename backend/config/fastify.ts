@@ -2,29 +2,43 @@ import Fastify from 'fastify';
 import fastifyPostgres from '@fastify/postgres';
 import fastifyCors from '@fastify/cors';
 import fastifyJwt from '@fastify/jwt';
+import fastifyCookie from '@fastify/cookie';
 import { env } from './env';
-
-// Fastify instance and register plugins
 
 export const buildFastify = () => {
   const fastify = Fastify({ logger: true });
 
-  // PostgreSQL
   fastify.register(fastifyPostgres, {
-    // what is it doing 
-    // ----------------
     connectionString: env.DATABASE_URL,
   });
 
-  // CORS
   fastify.register(fastifyCors, {
     origin: env.FRONTEND_URL,
+    credentials: true, // REQUIRED for cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
   });
 
-  // JWT
+  // for cookie-based JWT
+  fastify.register(fastifyCookie);
+
+  // JWT config
   fastify.register(fastifyJwt, {
     secret: env.JWT_SECRET,
+    cookie: {
+      cookieName: 'access_token',
+      signed: false,
+    },
+  });
+
+  // Auth guard
+  fastify.decorate('authenticate', async (request: any, reply: any) => {
+    try {
+      // return the user data
+      await request.jwtVerify();
+    }
+    catch {
+      reply.code(401).send({ message: 'Unauthorized' });
+    }
   });
 
   return fastify;

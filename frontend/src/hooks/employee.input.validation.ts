@@ -11,6 +11,21 @@ export const useEmployeeValidation = (
     const newErrors: any = {};
     let hasError = false;
 
+    // Employer ID validation
+    const employerIDRegex = /^[0-9]{1,10}$/;
+    if (!data.employer_id.trim()) {
+        newErrors.employer_id = 'Employer ID is required.';
+        hasError = true;
+    } 
+    else if (!employerIDRegex.test(data.employer_id)) {
+        newErrors.employer_id = 'Employer ID must be a number with up to 10 digits.';
+        hasError = true;
+    } 
+    else {
+        newErrors.employer_id = '';
+    }
+
+
     // Employee Name validation
     const EmployeeNameRegex = /^[A-Za-z\s]{2,50}$/;
     if (!data.name.trim()) {
@@ -81,7 +96,6 @@ export const useEmployeeValidation = (
                     entry.state.toLowerCase() === data.state.trim().toLowerCase()
             );
 
-            console.log('matched zip', matchedZip)
             if (!matchedZip) {
                 newErrors.zip = 'Employee Zip does not match city or state.';
                 hasError = true;

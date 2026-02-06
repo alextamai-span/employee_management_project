@@ -57,10 +57,11 @@ export const updateEmployee = `
 
 export const employeeList = `
   SELECT * FROM employees 
-  WHERE employer_id = $1 
+  WHERE is_deleted = FALSE
   ORDER BY created_at DESC`;
 
 export const deleteEmployeeFromList = `
-  DELETE FROM employees
+  UPDATE employees
+  SET is_deleted = TRUE
   WHERE id = $1
   RETURNING *`;

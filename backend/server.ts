@@ -11,11 +11,8 @@ import employerRoutes from './routes/employer.route'
 import employeeRoutes from './routes/employee.route'
 import { requestLogger } from './plugins/requestLogger.js';
 
-// Fastify build
-const fastify = buildFastify();
-
 // connect and initialize employer/employee database tables
-const initializeDatabase = async () => {
+const initializeDatabase = async (fastify: any) => {
   try {
     const client = await fastify.pg.connect();
 
@@ -38,6 +35,9 @@ const initializeDatabase = async () => {
 
 // start 
 const start = async () => {
+  // Fastify build
+  const fastify = buildFastify();
+
   try {
     // start logging
     requestLogger(fastify); 
@@ -52,7 +52,7 @@ const start = async () => {
     // start up plug ins
     await fastify.ready();
     // start up database
-    await initializeDatabase();
+    await initializeDatabase(fastify);
 
     
     // listen on port 5000

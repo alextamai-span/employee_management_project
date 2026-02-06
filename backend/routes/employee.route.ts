@@ -18,7 +18,7 @@ export default async function employeeRoutes(fastify: FastifyInstance) {
     EmployeeController.listEmployees
   );
 
-  fastify.delete(
+  fastify.put(
     '/delete',
     EmployeeController.deleteEmployee
   );

@@ -17,11 +17,11 @@ export const EmployeeService = (fastify: FastifyInstance) => {
     },
 
     // listing all employees
-    async getAllEmployees(employerId: any): Promise<Employee[]> {
-      return await repo.listAllEmployees(employerId);
+    async getAllEmployees(): Promise<Employee[]> {
+      return await repo.listAllEmployees();
     },
 
-    async deleteEmployee(employeeId: any): Promise<boolean> {
+    async deleteEmployee(employeeId: any): Promise<Employee> {
       return await repo.deleteEmployee(employeeId);
     }
   };

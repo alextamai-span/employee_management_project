@@ -1,16 +1,17 @@
 import "@fastify/jwt";
+import 'fastify';
 
-declare module "@fastify/jwt" {
+declare module '@fastify/jwt' {
   interface FastifyJWT {
+    // the decoded payload
     payload: {
-      // employerId in JWT
-      id: string;
-      email?: string;
+      id: any;
+      email?: any;
     };
+    // user after jwtVerify()
     user: {
-      // user object after jwtVerify()
-      id: string;      
-      email?: string;
+      id: any;
+      email?: any;
     };
-  }
+ }
 }

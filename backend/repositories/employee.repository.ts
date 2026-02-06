@@ -47,11 +47,10 @@ export const EmployeeRepository = (fastify: FastifyInstance) => ({
   },
 
   // listing all employees
-  async listAllEmployees(employerId: any): Promise<Employee[]> {
+  async listAllEmployees(): Promise<Employee[]> {
     try {
       const { rows } = await fastify.pg.query(
-        employeeList,
-        [employerId]
+        employeeList
       );
       
       return rows;
@@ -62,7 +61,8 @@ export const EmployeeRepository = (fastify: FastifyInstance) => ({
     }
   },
 
-  async deleteEmployee(employeeId: any): Promise<boolean> {
+  async deleteEmployee(employeeId: any): Promise<Employee> {
+    console.log(colors.red('id'), employeeId)
     try {
       const row = await fastify.pg.query(
         deleteEmployeeFromList,
@@ -71,10 +71,10 @@ export const EmployeeRepository = (fastify: FastifyInstance) => ({
 
       if (row.rowCount === 0) {
         // No employee was deleted
-        return false;
+        throw new Error('Employee not found');
       }
 
-      return true;
+      return row.rows[0];
     }
     catch (error) {
       console.error('Failed to delete employee from the DB', error);

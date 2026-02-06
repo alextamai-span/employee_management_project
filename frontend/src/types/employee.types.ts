@@ -11,7 +11,7 @@ export interface Employee {
   country: string;
 }
 
-export interface EmployeeFormData extends Omit<Employee, 'id' | 'employer_id'> {}
+export interface EmployeeFormData extends Omit<Employee, 'id'> {}
 
 export interface EmployeeFormErrors {
   [key: string]: string | undefined;

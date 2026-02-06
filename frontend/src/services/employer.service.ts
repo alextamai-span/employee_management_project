@@ -34,11 +34,13 @@ export const saveEmployerAccountToDB = async (
 };
 
 export const authenticateEmployer = async (
-  checkData: Pick<EmployerFormData, "employerEmail" | "employerPassword"> // only need the email and password for logging in
-): Promise<ServiceResponse> => {
+  // only need the email and password for logging in
+  checkData: Pick<EmployerFormData, "employerEmail" | "employerPassword"> 
+): Promise<ServiceResponse & { token?: string }> => {
   try {
     const response = await fetch("http://localhost:5000/employers/login", {
-      method: "POST", // for security and get would have email/password in the url
+      // for security and get would have email/password in the url
+      method: "POST", 
       headers: {
         "Content-Type": "application/json",
       },
@@ -55,7 +57,8 @@ export const authenticateEmployer = async (
     return {
       success: true,
       message: result.message || "Log in successful!",
-      data: result.employerId
+      data: result.employerId,
+      token: result.token
     };
   }
   catch (error) {

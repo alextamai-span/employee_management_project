@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { EmployerService } from '../services/employer.service';
+import colors from 'console-log-colors'
 
 // receive requests and respond to them
 export const EmployerController = {
@@ -28,16 +29,26 @@ export const EmployerController = {
 
     try {
       const { employerEmail, employerPassword } = request.body as any;
-      const { employerId } = await service.loginEmployer(employerEmail, employerPassword);
+      const employer = await service.loginEmployer(employerEmail, employerPassword);
+
+      const token = request.server.jwt.sign(
+        { 
+          id: employer.id,
+          email: employer.email
+        },
+        { expiresIn: '1h' }
+      );
 
       return reply.send({
         message: 'Login successful',
-        employerId: employerId
-      });      
+        employerId: employer.id,
+        token: token,
+      });
+
     }
     catch (err: any) {
       request.log.error(err);
-      return reply.status(401).send({ message: err.message || 'Login failed' });
+      return reply.status(401).send({ message: 'Login failed' });
     }
   },
 

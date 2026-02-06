@@ -51,10 +51,8 @@ export const EmployeeController = {
   async listEmployees(request: FastifyRequest, reply: FastifyReply) {
     const service = EmployeeService(request.server);
 
-    const { employerId } = request.query as { employerId?: any };
-
     try {
-      const rows = await service.getAllEmployees(employerId);
+      const rows = await service.getAllEmployees();
       return reply.status(200).send(rows);
     }
     catch (err) {
@@ -65,9 +63,8 @@ export const EmployeeController = {
   async deleteEmployee(request: FastifyRequest, reply: FastifyReply) {
     const service = EmployeeService(request.server);
   
-    const { employeeId } = request.query as { employeeId?: any };
-  
     try {
+      const { employeeId } = request.query as { employeeId?: any };
       const deleted = await service.deleteEmployee(employeeId);
 
       if (!deleted) {

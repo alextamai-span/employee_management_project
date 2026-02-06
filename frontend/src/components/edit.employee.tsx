@@ -17,6 +17,7 @@ const EditEmployeePopUp: React.FC<EditEmployeePopUpProps> = ({
   onEmployeeUpdated
 }) => {
   const [formData, setFormData] = useState({
+    employer_id: employee.employer_id,
     name: employee.name,
     ssn: employee.ssn,
     address1: employee.address1,
@@ -134,6 +135,9 @@ const EditEmployeePopUp: React.FC<EditEmployeePopUpProps> = ({
         <h2>Edit Employee</h2>
 
         <form onSubmit={handleSubmit}>
+          <input name="employer_id" value={formData.employer_id} onChange={handleChange} />
+          {errors.employer_id && ( <h4 className="form-invalid">{errors.employer_id}</h4> )}
+
           <input name="name" value={formData.name} onChange={handleChange} />
           {errors.name && ( <h4 className="form-invalid">{errors.name}</h4> )}
 

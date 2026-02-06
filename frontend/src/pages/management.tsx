@@ -12,6 +12,7 @@ const EmployeeManagement = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const employerId = location.state.employerId;
+  const token = location.state.token;
 
   const [showAddPopUp, setShowAddPopUp] = useState(false);
   const [showEditEmployeePopUp, setshowEditEmployeePopUp] = useState(false);
@@ -22,11 +23,11 @@ const EmployeeManagement = () => {
   useEffect(() => {
     const loadEmployees = async () => {
       try {
-        const allEmployees = await fetchEmployees(employerId);
-        
-        // Filter the data: only keep those where the ID matches
+        const allEmployees = await fetchEmployees(employerId, token);
+
+        // Filter the data: remove null employer_id 
         const filteredData = allEmployees.filter((emp: any) => 
-          emp.employer_id == employerId
+          emp.employer_id !== null
         );
 
         setEmployees(filteredData);
@@ -36,16 +37,15 @@ const EmployeeManagement = () => {
       }
     };
 
-    if (employerId) { 
-      loadEmployees();
-    }
-  }, [employerId]); // Runs whenever employerId changes
+    loadEmployees();
+
+  }, [employerId, token]); // Runs whenever employerId changes
 
   // employee has been added
   const handleNewEmployee = async () => {
     try {
       // Re-fetch the updated list from the server
-      const data = await fetchEmployees(employerId);
+      const data = await fetchEmployees(employerId, token);
       setEmployees(data);
       
       // Close the popup
@@ -97,6 +97,7 @@ const EmployeeManagement = () => {
         {/* header row */}
         <thead>
           <tr>
+            <th>Employer ID</th>
             <th>Name</th>
             <th>SSN</th>
             <th>City</th>
@@ -112,6 +113,7 @@ const EmployeeManagement = () => {
           { employees.length > 0 ? (
             employees.map(emp => (
               <tr key={emp.id}>
+                <td>{emp.employer_id}</td>
                 <td>{emp.name}</td>
                 <td>{emp.ssn}</td>
                 <td>{emp.city}</td>
@@ -140,7 +142,7 @@ const EmployeeManagement = () => {
             ))
           ) : (
             <tr>
-              <td colSpan={7} style={{ textAlign: "center" }}>
+              <td colSpan={8} style={{ textAlign: "center" }}>
                 No employees yet. Click "Add Employee" to create one.
               </td>
             </tr>
@@ -153,7 +155,6 @@ const EmployeeManagement = () => {
         {showAddPopUp && (
           <AddEmployeePopUp
             key={employerId}
-            employerId={employerId}
             onClose={() => setShowAddPopUp(false)}
             onEmployeeAdded={handleNewEmployee}
           />

@@ -28,9 +28,10 @@ export const EmployerService = (fastify: FastifyInstance) => {
         throw new Error('Invalid email or password');
       }
 
-      const employerId = employer.id
-
-      return { employerId };
+      return { 
+        id: employer.id,
+        email: employer.email 
+      };
     },
 
     // listing all employers

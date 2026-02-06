@@ -1,11 +1,14 @@
 import { Employee, EmployeeFormData } from "../types/employee.types";
 import { ServiceResponse } from "../types/employer.types";
 
-export const fetchEmployees = async (employerId: any): Promise<Employee[]> => {
+export const fetchEmployees = async (employerId: any, token: string): Promise<Employee[]> => {
   try {
     const response = await fetch(`http://localhost:5000/employees/list?employerId=${employerId}`, { 
       method: "GET",
-      headers: {"Content-Type": "application/json"} 
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
     });
     
     if (!response.ok) {
@@ -85,7 +88,9 @@ export const deleteEmployee = async (
 ): Promise<ServiceResponse> => {
   try {
     const response = await fetch(`http://localhost:5000/employees/delete?employeeId=${id}`, {
-      method: "DELETE"
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(id),
     });
 
     if (!response.ok) {

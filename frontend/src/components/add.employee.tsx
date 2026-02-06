@@ -9,15 +9,14 @@ import { countries } from 'countries-list';
 interface AddEmployeePopUpProps {
   onClose: () => void;
   onEmployeeAdded: (employee: Employee) => void;
-  employerId: string;
 }
 
 const AddEmployeePopUp: React.FC<AddEmployeePopUpProps> = ({
   onClose,
   onEmployeeAdded,
-  employerId
 }) => {
   const [employeeFormData, setEmployeeFormData] = useState<EmployeeFormData>({
+    employer_id: "",
     name: "",
     ssn: "",
     address1: "",
@@ -95,10 +94,7 @@ const AddEmployeePopUp: React.FC<AddEmployeePopUpProps> = ({
     if (!hasError) {
       try {
 
-        const formData = {
-          ...employeeFormData,
-          employer_id: employerId,
-        };
+        const formData = { ...employeeFormData };
 
         const newEmployee = await addEmployee(formData);
                 
@@ -141,6 +137,13 @@ const AddEmployeePopUp: React.FC<AddEmployeePopUpProps> = ({
         <h2>Add Employee</h2>
 
         <form onSubmit={handleSubmit}>
+          <input
+            name="employer_id"
+            placeholder="Employer ID"
+            value={employeeFormData.employer_id}
+            onChange={handleChange}/> 
+          {errors.employer_id && ( <h4 className="form-invalid">{errors.employer_id}</h4> )}
+
           <input
             name="name"
             placeholder="Name"

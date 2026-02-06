@@ -41,21 +41,24 @@ export default function EmployerLogin() {
       try {
         const result = await authenticateEmployer(loginFormData);
 
-        if (result.success && result.data) {
+        if (result.success && result.data && result.token) {
           toast.success("Logged in successfully!");
+          localStorage.setItem("accessToken", result.token);
 
           navigate("/employer/management", {
-            state: { employerId: result.data }
+            state: { employerId: result.data, token: result.token }
           });
         }
         else {
           toast.error("Invalid login credentials");
         }
-      } catch (error) {
+      }
+      catch (error) {
         toast.error("Login failed!");
         console.error(error);
       }
-    } else {
+    }
+    else {
       toast.error("Please fix the errors in the form.");
     }
   };
