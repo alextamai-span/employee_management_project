@@ -13,7 +13,7 @@ export const useEmployeeValidation = (
 
     // Employer ID validation
     const employerIDRegex = /^[0-9]{1,10}$/;
-    if (!data.employer_id.trim()) {
+    if (data.employer_id === '') {
         newErrors.employer_id = 'Employer ID is required.';
         hasError = true;
     } 
@@ -25,7 +25,7 @@ export const useEmployeeValidation = (
         newErrors.employer_id = '';
     }
 
-
+    
     // Employee Name validation
     const EmployeeNameRegex = /^[A-Za-z\s]{2,50}$/;
     if (!data.name.trim()) {
@@ -104,7 +104,22 @@ export const useEmployeeValidation = (
                 newErrors.zip = '';
             }
         }
-        newErrors.zip = '';
+        else {
+            // Check zip matches city
+            const matchedZip = usCities.find(
+                (entry: any) =>
+                    entry.zip_code.toString() === data.zip &&
+                    entry.city.trim().toLowerCase() === data.city.trim().toLowerCase()
+            );
+
+            if (!matchedZip) {
+                newErrors.zip = 'Employee Zip does not match city.';
+                hasError = true;
+            }
+            else {
+                newErrors.zip = '';
+            }
+        }
     }
 
     // Country validation

@@ -12,7 +12,7 @@ export const EmployeeService = (fastify: FastifyInstance) => {
       return repo.createEmployee(employeeData);
     },
 
-    async updateEmployee(employeeId: any, employeeData: Omit<Employee, "employer_id">): Promise<Employee> {
+    async updateEmployee(employeeId: any, employeeData: Employee): Promise<Employee> {
       return repo.updateEmployee(employeeId, employeeData);
     },
 

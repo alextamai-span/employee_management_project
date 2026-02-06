@@ -23,12 +23,12 @@ export const EmployeeRepository = (fastify: FastifyInstance) => ({
     }
   },
   
-  async updateEmployee(employeeId: any, data: Omit<Employee, "employer_id">): Promise<Employee> {
+  async updateEmployee(employeeId: any, data: Employee): Promise<Employee> {
     try {
       const { rows } = await fastify.pg.query(
         updateEmployee, 
         [
-          data.name, data.ssn, data.address1, 
+          data.employer_id, data.name, data.ssn, data.address1, 
           data.address2, data.city, data.state, 
           data.zip, data.country, employeeId
         ]

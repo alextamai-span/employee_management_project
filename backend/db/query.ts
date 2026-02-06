@@ -47,12 +47,12 @@ export const addEmployee = `
 
 export const updateEmployee = `
   UPDATE employees 
-  SET name = $1, ssn = $2, 
-    address1 = $3, address2 = $4, 
-    city = $5, state = $6, 
-    zip = $7, country = $8,
+  SET employer_id = $1, name = $2, ssn = $3, 
+    address1 = $4, address2 = $5, 
+    city = $6, state = $7, 
+    zip = $8, country = $9,
     updated_at = NOW()
-  WHERE id = $9
+  WHERE id = $10 AND is_deleted = FALSE
   RETURNING *`;
 
 export const employeeList = `

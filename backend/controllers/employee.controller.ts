@@ -32,7 +32,7 @@ export const EmployeeController = {
 
     try {
       const { employeeId } = request.query as { employeeId: any};
-      const employeeData = request.body as Omit<Employee, "employer_id">;
+      const employeeData = request.body as Employee;
 
       const updatedEmployee = await service.updateEmployee(employeeId, employeeData);
 
