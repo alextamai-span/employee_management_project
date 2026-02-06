@@ -4,7 +4,7 @@ import { EmployeeFormData, EmployeeFormErrors } from "../types/employee.types";
 export const useEmployeeForm = () => {
   // Initial state for the form
   const [employeeFormData, setEmployeeFormData] = useState<EmployeeFormData>({
-    // employer_id: "",
+    employer_id: "",
     name: "",
     ssn: "",
     address1: "",

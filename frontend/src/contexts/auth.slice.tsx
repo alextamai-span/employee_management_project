@@ -1,4 +1,3 @@
-// authSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { EmployerProfile } from "../types/employer.types";
 
